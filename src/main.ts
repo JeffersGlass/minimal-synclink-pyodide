@@ -14,7 +14,21 @@ async function _startInterpreter_main(){
         const wrapped_remote_interpreter = Synclink.wrap(port1);
 
         //User Code Here vvvv
-        
+        const pyMethod = (await remote_interpreter).runPython(`
+        class SomeClass():
+            def someMethod(self, param1):
+                print(f"This got 1 argument: {param1}")
+        instance = SomeClass()
+
+        instance.someMethod("foo")
+
+        import inspect
+        print(f"{len(inspect.signature(instance.someMethod).parameters)= }")
+        instance.someMethod
+    `)
+
+    const pyInspectModule = (await remote_interpreter).pyimport('inspect')
+    console.log('Number of Parameters:', pyInspectModule.signature(pyMethod).parameters.length)
         //User Code Above ^^^^
 
         console.log("User code complete")
